@@ -12,6 +12,7 @@ export default function EnglishQuizApp() {
   const [results, setResults] = useState([]);
   const [playerScore, setPlayerScore] = useState(null);
   const [playerRank, setPlayerRank] = useState(null);
+  const [showRanking, setShowRanking] = useState(false);
 
   const questionsURL = "https://script.google.com/macros/s/AKfycbz7ZP8Gvtl8J4SyV4UPScvxgGwYgorDBzpdLFwxpjNOy8e3ixE-pEEoA0uKVcs4wxw/exec";
   const submitURL = "https://script.google.com/macros/s/AKfycbx1JbTy_bP88qkhgaG1Jv1An78qkWEeYi7CwkmGD8Gm4n_Eh-bs6yUyk48v2zzVUto/exec";
@@ -49,10 +50,9 @@ export default function EnglishQuizApp() {
 
     setPlayerScore(score);
     setSubmitted(true);
-    fetchAnswers(score);
   };
 
-  const fetchAnswers = (latestScore) => {
+  const fetchAnswers = () => {
     fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vT-XsJ5I0MCkztdhdVthqKPu1yHEyB6b0kp5SYQyWh_u8nxJj3hRtfau7NPpYeL5aIY6ptMbzXxYdYl/pub?output=csv")
       .then(res => res.text())
       .then(csv => {
@@ -62,9 +62,10 @@ export default function EnglishQuizApp() {
           return { name, score: Number(score) };
         });
         const sorted = parsed.sort((a, b) => b.score - a.score);
-        const rank = sorted.findIndex(r => r.name === playerName && r.score === latestScore);
+        const rank = sorted.findIndex(r => r.name === playerName && r.score === playerScore);
         setResults(sorted);
         setPlayerRank(rank >= 0 ? rank + 1 : null);
+        setShowRanking(true);
       });
   };
 
@@ -103,25 +104,35 @@ export default function EnglishQuizApp() {
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold">🎉 成績已送出 🎉</h2>
           <p className="text-xl">你答對了 {playerScore} / {questions.length} 題</p>
-          {playerRank && (
-            <p className="text-xl font-semibold text-green-600">你目前是第 {playerRank} 名 🏅</p>
+
+          {!showRanking && (
+            <Button className="mt-4 text-lg py-2 px-4" onClick={fetchAnswers}>
+              📊 顯示排行榜
+            </Button>
           )}
 
-          <div className="mt-6 font-bold text-2xl">🏆 排行榜 🏆</div>
-          <div className="space-y-1">
-            {results.map((p, idx) => (
-              <div
-                key={idx}
-                className={
-                  p.name === playerName && p.score === playerScore
-                    ? "font-bold text-blue-600"
-                    : "text-gray-700"
-                }
-              >
-                {idx + 1}. {p.name}（{p.score} 分）
+          {showRanking && (
+            <>
+              {playerRank && (
+                <p className="text-xl font-semibold text-green-600">你目前是第 {playerRank} 名 🏅</p>
+              )}
+              <div className="mt-6 font-bold text-2xl">🏆 排行榜 🏆</div>
+              <div className="space-y-1">
+                {results.map((p, idx) => (
+                  <div
+                    key={idx}
+                    className={
+                      p.name === playerName && p.score === playerScore
+                        ? "font-bold text-blue-600"
+                        : "text-gray-700"
+                    }
+                  >
+                    {idx + 1}. {p.name}（{p.score} 分）
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       )}
     </div>
