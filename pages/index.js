@@ -16,6 +16,7 @@ export default function EnglishQuizApp() {
 
   const questionsURL = "https://script.google.com/macros/s/AKfycbz7ZP8Gvtl8J4SyV4UPScvxgGwYgorDBzpdLFwxpjNOy8e3ixE-pEEoA0uKVcs4wxw/exec";
   const submitURL = "https://script.google.com/macros/s/AKfycbx1JbTy_bP88qkhgaG1Jv1An78qkWEeYi7CwkmGD8Gm4n_Eh-bs6yUyk48v2zzVUto/exec";
+  const resultCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpq_qOHDW4OYLGFyj0bSqMLBRmcW_xcGgbzAr1hs8bLNZXRK3V0yPAbLmYibK9Rne7WCp6u4pOl6TX/pub?output=csv";
 
   useEffect(() => {
     fetch(questionsURL)
@@ -53,7 +54,7 @@ export default function EnglishQuizApp() {
   };
 
   const fetchAnswers = () => {
-    fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vT-XsJ5I0MCkztdhdVthqKPu1yHEyB6b0kp5SYQyWh_u8nxJj3hRtfau7NPpYeL5aIY6ptMbzXxYdYl/pub?output=csv")
+    fetch(resultCSV)
       .then(res => res.text())
       .then(csv => {
         const rows = csv.trim().split("\n").slice(1);
