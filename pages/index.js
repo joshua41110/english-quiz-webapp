@@ -57,14 +57,20 @@ export default function EnglishQuizApp() {
     fetch(resultCSV)
       .then(res => res.text())
       .then(csv => {
-        const rows = csv.trim().split("\n").slice(1);
-        const latestTwo = rows.slice(-2); // 取最後兩筆
+        const lines = csv.trim().split("\n");
+        const header = lines[0].match(/(".*?"|[^",]+)(?=,|$)/g);
+        const nameIndex = header.findIndex(h => h.trim().toLowerCase() === "name");
+        const scoreIndex = header.findIndex(h => h.trim().toLowerCase() === "score");
+
+        const latestTwo = lines.slice(-2);
         const parsed = latestTwo.map(row => {
-          const parts = row.split(",");
-          const name = parts[0];
-          const score = parseInt(parts[3]);
+          const parts = row.match(/(".*?"|[^",]+)(?=,|$)/g);
+          const name = parts[nameIndex]?.replace(/^"|"$/g, "").trim();
+          const scoreRaw = parts[scoreIndex];
+          const score = parseInt(scoreRaw);
           return { name, score: isNaN(score) ? 0 : score };
         });
+
         const sorted = parsed.sort((a, b) => b.score - a.score);
         const rank = sorted.findIndex(r => r.name === playerName && r.score === playerScore);
         setResults(sorted);
