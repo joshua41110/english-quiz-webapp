@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -68,14 +69,14 @@ export default function EnglishQuizApp() {
   };
 
   return (
-    <div className="p-4 max-w-2xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold text-center">英文單字考卷</h1>
+    <div className="p-6 max-w-3xl mx-auto space-y-8">
+      <h1 className="text-3xl font-bold text-center mb-4">📘 英文單字考卷</h1>
 
       {!submitted ? (
         <Card className="p-6">
           <CardContent className="space-y-6">
             <Input
-              className="text-xl py-3"
+              className="text-lg p-3"
               placeholder="請輸入你的名字"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
@@ -85,10 +86,10 @@ export default function EnglishQuizApp() {
                 <div key={idx} className="grid grid-cols-3 items-center gap-4">
                   <div className="col-span-1 font-medium text-base">{q.zh}</div>
                   <Input
+                    className="col-span-2 p-2 text-base"
                     placeholder="英文答案"
                     value={answers[idx]}
                     onChange={(e) => handleAnswerChange(idx, e.target.value)}
-                    className="col-span-2 py-2"
                   />
                 </div>
               ))}
@@ -100,13 +101,13 @@ export default function EnglishQuizApp() {
         </Card>
       ) : (
         <div className="text-center space-y-4">
-          <h2 className="text-xl font-bold">🎉 成績已送出 🎉</h2>
-          <p className="text-lg">你答對了 {playerScore} / {questions.length} 題</p>
+          <h2 className="text-2xl font-bold">🎉 成績已送出 🎉</h2>
+          <p className="text-xl">你答對了 {playerScore} / {questions.length} 題</p>
           {playerRank && (
-            <p className="text-lg">你目前是第 {playerRank} 名 🏅</p>
+            <p className="text-xl font-semibold text-green-600">你目前是第 {playerRank} 名 🏅</p>
           )}
 
-          <div className="mt-4 font-bold text-xl">🏆 排行榜 🏆</div>
+          <div className="mt-6 font-bold text-2xl">🏆 排行榜 🏆</div>
           <div className="space-y-1">
             {results.map((p, idx) => (
               <div
@@ -114,7 +115,7 @@ export default function EnglishQuizApp() {
                 className={
                   p.name === playerName && p.score === playerScore
                     ? "font-bold text-blue-600"
-                    : ""
+                    : "text-gray-700"
                 }
               >
                 {idx + 1}. {p.name}（{p.score} 分）
