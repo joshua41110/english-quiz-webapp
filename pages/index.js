@@ -58,9 +58,12 @@ export default function EnglishQuizApp() {
       .then(res => res.text())
       .then(csv => {
         const rows = csv.trim().split("\n").slice(1);
-        const parsed = rows.map(row => {
-          const [name, , answersStr, score] = row.split(",");
-          return { name, score: Number(score) };
+        const latestTwo = rows.slice(-2); // 取最後兩筆
+        const parsed = latestTwo.map(row => {
+          const parts = row.split(",");
+          const name = parts[0];
+          const score = parseInt(parts[3]);
+          return { name, score: isNaN(score) ? 0 : score };
         });
         const sorted = parsed.sort((a, b) => b.score - a.score);
         const rank = sorted.findIndex(r => r.name === playerName && r.score === playerScore);
@@ -117,7 +120,7 @@ export default function EnglishQuizApp() {
               {playerRank && (
                 <p className="text-xl font-semibold text-green-600">你目前是第 {playerRank} 名 🏅</p>
               )}
-              <div className="mt-6 font-bold text-2xl">🏆 排行榜 🏆</div>
+              <div className="mt-6 font-bold text-2xl">🏆 排行榜（僅顯示最新兩筆） 🏆</div>
               <div className="space-y-1">
                 {results.map((p, idx) => (
                   <div
